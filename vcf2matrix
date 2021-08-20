@@ -1,1 +1,1 @@
-cut -f10- region_only_fin.vcf | grep -v '#' > region_only_fin.mtx
+cut -f10- region_only_fin.vcf | grep -v '#' | sed -e 's/0|0/0/g' -e 's/0|1/1/g' -e 's/1|0/1/g' -e 's/1|1/2/g' > region_only_fin.mtx

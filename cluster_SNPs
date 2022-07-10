@@ -45,3 +45,5 @@ clustered <- cbind(LD[,0], r50$cluster, r50$coredist) %>% rownames_to_column("PO
 write.csv(clustered, file = "r50_SNP_clusters.txt", sep = "\t")
 
 sed 's/.*,"//' r50_SNP_clusters.txt | sed 's/",/\t/' | sed 's/,/\t/' > r50_SNP_clust.txt
+
+awk '$2==10 { print $1}' r50_SNP_clust.txt > c10_IDs.txt

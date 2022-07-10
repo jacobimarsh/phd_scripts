@@ -1,0 +1,41 @@
+##get SNPs from region of interest
+
+plink --r2 square --vcf impu_100kb_pdh1.vcf
+
+awk '{print $3}' impu_100kb_pdh1.vcf | tail -n+2  > POS_file.txt
+
+paste POS_file.txt plink.ld > notop.txt
+
+awk '
+{ 
+    for (i=1; i<=NF; i++)  {
+        a[NR,i] = $i
+    }
+}
+NF>p { p = NF }
+END {    
+    for(j=1; j<=p; j++) {
+        str=a[1,j]
+        for(i=2; i<=NR; i++){
+            str=str" "a[i,j];
+        }
+        print str
+    }
+}' POS_file.txt | sed 's/ /\t/g' > LD_100kb.mtx
+
+##R
+
+library(dbscan)
+
+LD <- fread('data/LD_100kb.mtx') %>% as_tibble() %>% column_to_rownames(var="V1")
+
+dist_LD <- dist(LD)
+
+r240 <- hdbscan(dist_LD, minPts = 40)
+
+
+sqLD <- sqrt(LD)
+
+r40 <- hdbscan(sqLD, minPts = 40)
+
+r50 <- hdbscan(sqLD, minPts = 50)

@@ -39,3 +39,9 @@ sqLD <- sqrt(LD)
 r40 <- hdbscan(sqLD, minPts = 40)
 
 r50 <- hdbscan(sqLD, minPts = 50)
+
+clustered <- cbind(LD[,0], r50$cluster, r50$coredist) %>% rownames_to_column("POS") %>% rename("cluster" = 'r50$cluster', "coredist" = "r50$coredist")
+
+write.csv(clustered, file = "r50_SNP_clusters.txt", sep = "\t")
+
+sed 's/.*,"//' r50_SNP_clusters.txt | sed 's/",/\t/' | sed 's/,/\t/' > r50_SNP_clust.txt

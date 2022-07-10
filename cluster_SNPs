@@ -46,8 +46,16 @@ write.csv(clustered, file = "r50_SNP_clusters.txt", sep = "\t")
 
 sed 's/.*,"//' r50_SNP_clusters.txt | sed 's/",/\t/' | sed 's/,/\t/' > r50_SNP_clust.txt
 
-awk '$2==10 { print $1}' r50_SNP_clust.txt > c10_IDs.txt
+for i in {1..10}
 
-head -n 1 impu_100kb_pdh1.vcf > c10.vcf
+do echo ${i} | xargs -I [] awk '$2==[] {print $1}' r50_SNP_clust.txt > c${i}_IDs.txt
 
-grep -f c10_IDs.txt impu_100kb_pdh1.vcf >> c10.vcf
+head -n 1 impu_100kb_pdh1.vcf > c${i}.vcf
+
+grep -f c${i}_IDs.txt impu_100kb_pdh1.vcf >> c${i}.vcf
+
+plink --r2 square --vcf c${i}.vcf --out c${i}
+
+done
+
+awk '{print $1}' c${i}.vcf | sort

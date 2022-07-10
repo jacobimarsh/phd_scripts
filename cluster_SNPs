@@ -51,5 +51,3 @@ awk '$2==10 { print $1}' r50_SNP_clust.txt > c10_IDs.txt
 head -n 1 impu_100kb_pdh1.vcf > c10.vcf
 
 grep -f c10_IDs.txt impu_100kb_pdh1.vcf >> c10.vcf
-
-grep -f c10_IDs.txt impu_100kb_pdh1.vcf >> c10.vcf

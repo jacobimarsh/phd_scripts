@@ -29,33 +29,25 @@ library(dbscan)
 
 LD <- fread('data/LD_100kb.mtx') %>% as_tibble() %>% column_to_rownames(var="V1")
 
-dist_LD <- dist(LD)
+db140 <- dbscan(LD, eps = 1, minPts = 40)
 
-r240 <- hdbscan(dist_LD, minPts = 40)
+db140_tsne_clust <- cbind(LD[,0], db140$cluster, LDtsne) %>% rownames_to_column("POS") %>% rename("cluster" = "db140$cluster", "X" = "1", "Y" = "2")
 
+db140_plot <- ggplot(db140_tsne_clust, aes(x=X, y = Y, colour = as.factor(cluster))) + geom_point() + scale_color_discrete()
 
-sqLD <- sqrt(LD)
+write.csv(db140_tsne_clust, file = "db140_SNP_clusters.txt")
 
-r40 <- hdbscan(sqLD, minPts = 40)
+##back to bash
 
-r50 <- hdbscan(sqLD, minPts = 50)
-
-clustered <- cbind(LD[,0], r50$cluster, r50$coredist) %>% rownames_to_column("POS") %>% rename("cluster" = 'r50$cluster', "coredist" = "r50$coredist")
-
-write.csv(clustered, file = "r50_SNP_clusters.txt", sep = "\t")
-
-sed 's/.*,"//' r50_SNP_clusters.txt | sed 's/",/\t/' | sed 's/,/\t/' > r50_SNP_clust.txt
+sed 's/.*,"//' db140_SNP_clusters.txt | sed 's/",/\t/' | sed 's/,/\t/' > db140_SNP_clust.txt
 
 for i in {1..10}
-
 do echo ${i} | xargs -I [] awk '$2==[] {print $1}' r50_SNP_clust.txt > c${i}_IDs.txt
-
 head -n 1 impu_100kb_pdh1.vcf > c${i}.vcf
-
 grep -f c${i}_IDs.txt impu_100kb_pdh1.vcf >> c${i}.vcf
-
 plink --r2 square --vcf c${i}.vcf --out c${i}
-
 done
 
-awk '{print $1}' c${i}.vcf | sort
+#cat *.ld | sed 's/\t/\n/g' | sort -r > allLD.txt
+#wc allLD.txt
+#awk '$1<0.7' allLD.txt | wc

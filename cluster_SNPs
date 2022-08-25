@@ -23,6 +23,44 @@ END {
     }
 }' POS_file.txt | sed 's/ /\t/g' > LD_100kb.mtx
 
+
+##GET LD MATRIX REDO
+
+grep -v '#' fin_b51_173kb_only.vcf | awk '{print $3}' > temp_posfile.txt
+
+paste temp_posfile.txt plink.ld > notop.txt
+
+##add line to top row of temp_posfile.txt
+
+awk '{   for (i=1; i<=NF; i++)  {
+        a[NR,i] = $i
+    }
+}
+NF>p { p = NF }
+END {
+    for(j=1; j<=p; j++) {
+        str=a[1,j]
+        for(i=2; i<=NR; i++){
+            str=str" "a[i,j];
+        }
+        print str
+    }
+}' notop.txt | paste temp_posfile.txt - | sed 's/ /\t/g' > LD_173kb.mtx
+
+##DONE
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##R
 
 library(dbscan)

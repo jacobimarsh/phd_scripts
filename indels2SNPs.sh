@@ -13,7 +13,7 @@ bcftools norm -m + split_clean_INs.vcf > clean_INs.vcf
 bcftools norm -m + split_clean_DELs.vcf > clean_DELs.vcf
 
 #convert DELs to biallelic with G as ref allele and C as alternate allele
-sed 's/\.\//m\//g' clean_DELs.vcf | sed 's/\/\./\/m/g' | sed 's/0\//n\//g' mm_clean_DELs.vcf | sed 's/\/0/\/n/g' | sed -r 's/[0-9]+\//1\//g' nn_mm_clean_DELs.vcf | sed -r 's/\/[0-9]+/\/1/g' | sed 's/m\//\.\//g' | sed 's/\/m/\/\./g'  | sed 's/n\//0\//g' | sed 's/\/n/\/0/g' | sed 's/10\//1\//g' | sed 's/\/10/\/1/g' | sed 's/01\//1\//g' | sed 's/\/01/\/1/g' | sed 's/\.\t[^\t]*\t[^\t]*/.\tG\tC/' > Gref_Calt_DELs.vcf
+sed 's/\.\//m\//g' clean_DELs.vcf | sed 's/\/\./\/m/g' | sed 's/0\//n\//g' | sed 's/\/0/\/n/g' | sed -r 's/[0-9]+\//1\//g' | sed -r 's/\/[0-9]+/\/1/g' | sed 's/m\//\.\//g' | sed 's/\/m/\/\./g'  | sed 's/n\//0\//g' | sed 's/\/n/\/0/g' | sed 's/10\//1\//g' | sed 's/\/10/\/1/g' | sed 's/01\//1\//g' | sed 's/\/01/\/1/g' | sed 's/\.\t[^\t]*\t[^\t]*/.\tG\tC/' > Gref_Calt_DELs.vcf
 #add 'DEL_' prefix to ID 
 bcftools annotate --set-id +'DEL_%POS' Aref_Talt_DELs.vcf > biallelic_DELs.vcf
 #filter using whatever parameters you want

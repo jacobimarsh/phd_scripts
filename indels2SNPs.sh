@@ -1,4 +1,3 @@
-
 #extract indels only from VCF
 vcftools --vcf in.vcf --keep-only-indels --recode
 
